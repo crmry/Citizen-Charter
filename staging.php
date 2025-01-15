@@ -92,6 +92,10 @@
           table-layout:fixed;
           width:100%;
         }
+        @media print {
+            thead { display: table-header-group; }
+            tfoot { display: table-footer-group; }
+        }
     </style>
 </head>
 <body>
@@ -430,13 +434,6 @@
                         .requirements-table th:last-child {
                             width: 50%;
                         }
-        @media print {
-
-            thead { display: table-header-group; }
-
-            tfoot { display: table-footer-group; }
-
-        }
                     </style>
                 </head>
                 <body>
