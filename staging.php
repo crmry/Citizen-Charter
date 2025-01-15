@@ -198,6 +198,7 @@
         </div>
 
         <button onclick="openPreview()">Preview</button>
+        <button onclick="printPreview()">Print</button>
     </div>
 
     <script>
@@ -511,6 +512,159 @@
             `);
             previewWindow.document.close();
         }
+        function printPreview() {
+    const serviceName = document.getElementById('serviceNameInput').value;
+    const description = editor.getData();
+    const office = document.querySelector('textarea[name="office"]').value;
+    const classification = document.querySelector('select[name="classification"]').value;
+    const transactionTypes = Array.from(document.querySelectorAll('input[name="transaction_type"]:checked')).map(el => el.value);
+    const whoMayAvail = document.querySelector('textarea[name="who_may_avail"]').value.replace(/\n/g, '<br>');
+
+    const requirementData = getRequirementData();
+    const processOverviewData = getProcessOverviewData();
+
+    const FeesToBePaid = document.getElementById('FeesToBePaid').value;
+    const ProcessingTime = document.getElementById('ProcessingTime').value;
+
+    const printWindow = window.open('', 'Print', `width=${screen.width},height=${screen.height}`);
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Print Preview</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    line-height: 1.6;
+                    margin: 0;
+                    padding: 20px;
+                    overflow: auto; /* Ensure scrollbars appear if content overflows */
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 20px;
+                    page-break-before: auto;
+                    page-break-after: auto;
+                }
+                th, td {
+                    border: 1px solid #000;
+                    padding: 8px;
+                    text-align: left;
+                    vertical-align: top;
+                    word-wrap: break-word; /* Ensure words break within the cell */
+                }
+                .main-header {
+                    text-align: left;
+                    margin-bottom: 20px;
+                }
+                .service-name {
+                    font-family: Arial, sans-serif;
+                    font-size: 19.2px !important;
+                    font-weight: bold !important;
+                    margin-bottom: 10px;
+                    display: block;
+                    width: 100%;
+                }
+                .service-description {
+                    margin-bottom: 10px;
+                }
+                .requirements-header {
+                    font-weight: bold;
+                    background-color: #f2f2f2;
+                }
+                .requirements-table {
+                    width: 100%;
+                    margin-top: -21px;
+                }
+                .requirements-table th:first-child {
+                    width: 50%;
+                }
+                .requirements-table th:last-child {
+                    width: 50%;
+                }
+                @media print {
+                    thead { display: table-header-group; }
+                    tfoot { display: table-footer-group; }
+                    body { -webkit-print-color-adjust: exact; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="main-header">
+                <span class="service-name">${serviceName}</span>
+                <div class="service-description">${description}</div>
+            </div>
+            <table class="info-table">
+                <tr>
+                    <td style="background-color:#8eaadb">Office or Division</td>
+                    <td>${office}</td>
+                </tr>
+                <tr>
+                    <td style="background-color:#8eaadb">Classification:</td>
+                    <td>${classification}</td>
+                </tr>
+                <tr>
+                    <td style="background-color:#8eaadb">Type of Transaction:</td>
+                    <td>${transactionTypes.join(', ')}</td>
+                </tr>
+                <tr>
+                    <td style="background-color:#8eaadb">Who may avail:</td>
+                    <td>${whoMayAvail}</td>
+                </tr>
+            </table>
+            <table class="requirements-table">
+                <thead>
+                    <tr>
+                        <th style="background-color:#8eaadb; text-align:center; width:60%;">CHECKLIST OF REQUIREMENTS</th>
+                        <th style="background-color:#8eaadb; text-align:center; width:40%;">WHERE TO SECURE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${requirementData.map(req => `
+                        <tr>
+                            <td>${req.requirement}</td>
+                            <td>${req.whereToSecure}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            <table class="requirements-table" id="processOverviewTable">
+                <thead>
+                    <tr>
+                        <th style="background-color:#8eaadb; text-align:center; width:30%; word-wrap: break-word;">CLIENT STEPS</th>
+                        <th style="background-color:#8eaadb; text-align:center; width:30%; word-wrap: break-word;">AGENCY ACTIONS</th>
+                        <th style="background-color:#8eaadb; text-align:center; width:10%; word-wrap: break-word;">FEES TO BE PAID</th>
+                        <th style="background-color:#8eaadb; text-align:center; width:10%; word-wrap: break-word;">PROCESSING TIME</th>
+                        <th style="background-color:#8eaadb; text-align:center; width:20%; word-wrap: break-word;">PERSON RESPONSIBLE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${processOverviewData.map(proc => `
+                        <tr>
+                            <td>${proc.clientSteps}</td>
+                            <td>${proc.agencyActions}</td>
+                            <td>${proc.feesToBePaid}</td>
+                            <td>${proc.processingTime}</td>
+                            <td>${proc.personResponsible}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th style="background-color:#8eaadb; text-align:center; width:30%;"></th>
+                        <th style="background-color:#8eaadb; text-align:right; width:30%;">TOTAL</th>
+                        <th style="background-color:#8eaadb; text-align:center; width:10%;">${FeesToBePaid}</th>
+                        <th style="background-color:#8eaadb; text-align:center; width:10%;">${ProcessingTime}</th>
+                        <th style="background-color:#8eaadb; text-align:center; width:20%;"></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+}
     </script>
 </body>
 </html>
