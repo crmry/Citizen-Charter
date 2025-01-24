@@ -64,8 +64,7 @@
         .requirements-table th, .requirements-table td {
             border: 1px solid #000;
             padding: 8px;
-            text-align: left;
-           
+            text-align: left; 
         }
         .requirements-table th {
             background-color: #f0f0f0;
@@ -156,7 +155,7 @@
         <div class="requirements-section">
             <h3>Requirements</h3>
             <button type="button" onclick="addRequirementRow()">Add New Requirement Row</button>
-            <table class="requirements-table" id="requirementsTable">
+            <table class="requirementsChecklistTable" id="requirements-table">
                 <thead>
                     <tr>
                         <th>CHECKLIST OF REQUIREMENTS</th>
@@ -171,7 +170,7 @@
         <div class="requirements-section">
             <h3>Process Overview</h3>
             <button type="button" onclick="addProcessOverviewRow()">Add New Process Overview Row</button>
-            <table class="requirements-table" id="processOverviewTable">
+            <table id="processOverviewTable" class="requirements-table" >
                 <thead>
                     <tr>
                         <th>Client Steps</th>
@@ -375,16 +374,33 @@
                 }
             });
 
-            let previewWindow = window.open('', 'Preview', 'width=800,height=600');
+            let previewWindow = window.open('', 'Preview', 'width=816,height=1056');
             previewWindow.document.write(`
                 <html>
                 <head>
                     <title>Preview</title>
                     <style>
+                        @media print {
+                                table {
+                                    page-break-inside: auto;
+                                    border-collapse: collapse;
+                                }
+                                thead {
+                                    display: table-header-group;
+                                }
+                                tfoot {
+                                    display: table-footer-group;
+                                }
+                                tr {
+                                    page-break-inside: avoid;
+                                    page-break-after: auto;
+                                }
+                            }
                         body {
                             font-family: Arial, sans-serif;
                             line-height: 1.6;
-                            margin: 20px;
+                            margin: 0;
+                            padding: 20px;
                         }
                         table {
                             width: 100%;
@@ -427,11 +443,8 @@
                             width: 100%;
                             margin-top: -21px;
                         }
-                        .requirements-table th:first-child {
-                            width: 50%;
-                        }
-                        .requirements-table th:last-child {
-                            width: 50%;
+                        .process-overview-table {
+                            margin-top: -21px;
                         }
                     </style>
                 </head>
@@ -458,14 +471,15 @@
                             <td>${whoMayAvail}</td>
                         </tr>
                     </table>
-                    <table class="requirements-table">
+                    <table style="table-layout: fixed; width: 100%;" class="requirements-table">
+                        <colgroup>
                         <thead>
-                            <tr>
-                                <th style="background-color:#8eaadb; text-align:center; width:50%;">CHECKLIST OF REQUIREMENTS</th>
-                                <th style="background-color:#8eaadb; text-align:center; width:50%;">WHERE TO SECURE</th>
-                            </tr>
                         </thead>
                         <tbody>
+                             <tr>
+                                <th style="background-color:#8eaadb; text-align:center; width:60%;">CHECKLIST OF REQUIREMENTS</th>
+                                <th style="background-color:#8eaadb; text-align:center; width:40%">WHERE TO SECURE</th>
+                            </tr>
                             ${requirements.map(req => `
                                 <tr>
                                     <td>${req.requirement}</td>
@@ -474,17 +488,15 @@
                             `).join('')}
                         </tbody>
                     </table>
-                    <table class="requirements-table" id="processOverviewTable">
+                    <table style="table-layout: fixed; width: 100%;" class="process-overview-table">
                         <thead>
-                            <tr>
+                        </thead>
+                        <tbody style="page-break-before:avoid;">
                                 <th style="background-color:#8eaadb; text-align:center; width:30%; word-wrap: break-word;">CLIENT STEPS</th>
                                 <th style="background-color:#8eaadb; text-align:center; width:30%; word-wrap: break-word;">AGENCY ACTIONS</th>
-                                <th style="background-color:#8eaadb; text-align:center; width:5%; word-wrap: break-word;">FEES TO BE PAID</th>
-                                <th style="background-color:#8eaadb; text-align:center; width:5%; word-wrap: break-word;">PROCESSING TIME</th>
+                                <th style="background-color:#8eaadb; text-align:center; width:10%; word-wrap: break-word;">FEES TO BE PAID</th>
+                                <th style="background-color:#8eaadb; text-align:center; width:15%; word-wrap: break-word;">PROCESSING TIME</th>
                                 <th style="background-color:#8eaadb; text-align:center; width:15%; word-wrap: break-word;">PERSON RESPONSIBLE</th>
-                            </tr>
-                        </thead>
-                        <tbody>
                             ${processOverview.map(proc => `
                                 <tr>
                                     <td>${proc.clientSteps}</td>
@@ -494,14 +506,15 @@
                                     <td>${proc.personResponsible}</td>
                                 </tr>
                             `).join('')}
+                                <th style="background-color:#8eaadb; text-align:center; width:30%;"></th>
+                                <th style="background-color:#8eaadb; text-align:right; width:30%;">TOTAL</th>
+                                <th style="background-color:#8eaadb; text-align:center; width:10%;">${FeesToBePaid}</th>
+                                <th style="background-color:#8eaadb; text-align:center; width:15%;">${ProcessingTime}</th>
+                                <th style="background-color:#8eaadb; text-align:center; width:15%;"></th>
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th style="background-color:#8eaadb; text-align:center; width:30%;"></th>
-                                <th style="background-color:#8eaadb; text-align:right; width:20%;">TOTAL</th>
-                                <th style="background-color:#8eaadb; text-align:center; width:10%;">${FeesToBePaid}</th>
-                                <th style="background-color:#8eaadb; text-align:center; width:15%;">${ProcessingTime}</th>
-                                <th style="background-color:#8eaadb; text-align:center; width:30%;"></th>
+
                             </tr>
                         </tfoot>
                     </table>
