@@ -121,6 +121,10 @@ function deleteRequirementRow(row) {
 
     // Remove the row from the table
     row.remove();
+
+        // Rebuild the preview after deletion
+        openPreview(); // This triggers a fresh preview rebuild
+
 }
 
 // Delete process overview row
@@ -138,11 +142,15 @@ function deleteProcessOverviewRow(row) {
 
     // Remove the row from the table
     row.remove();
+
+        // Rebuild the preview after deletion
+        openPreview(); // This triggers a fresh preview rebuild
+
 }
 
 function openPreview() {
-    var FeesToBePaid = document.getElementById('FeesToBePaid').value;
-    var ProcessingTime = document.getElementById('ProcessingTime').value;
+    var FeesToBePaid = document.getElementById('FeesToBePaid').value || "N/A";
+    var ProcessingTime = document.getElementById('ProcessingTime').value || "N/A";
     console.log('Preview button clicked');
     const serviceName = document.getElementById('serviceNameInput').value;
     const description = editor.getData();
@@ -303,11 +311,16 @@ function openPreview() {
                         </tr>
                     `).join('')}
                     <tr>
-                        <td colspan="5"><br></td>
+                        <td style="background-color:#8eaadb; text-align:center; width:30%;"></td>
+                        <td style="background-color:#8eaadb; text-align:right; width:30%;">TOTAL</td>
+                        <td style="background-color:#8eaadb; text-align:center; width:10%;">${FeesToBePaid}</td>
+                        <td style="background-color:#8eaadb; text-align:center; width:15%;">${ProcessingTime}</td>
+                        <td style="background-color:#8eaadb; text-align:center; width:15%;"></td>
                     </tr>
                 </tbody>
             </table>
         </body>
         </html>
     `);
+    previewWindow.document.close();
 }
